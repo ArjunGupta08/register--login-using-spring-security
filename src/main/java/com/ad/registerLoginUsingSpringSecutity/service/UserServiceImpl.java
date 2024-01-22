@@ -4,6 +4,7 @@ import com.ad.registerLoginUsingSpringSecutity.entity.User;
 import com.ad.registerLoginUsingSpringSecutity.repository.UserRepo;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
@@ -14,12 +15,18 @@ public class UserServiceImpl implements UserService {
     @Autowired
     public UserRepo userRepo;
 
+    @Autowired
+    private BCryptPasswordEncoder passwordEncoder;
+
     @Override
     public User saveUser(User user) {
 
-        User user1 = userRepo.save(user);
+        String password=passwordEncoder.encode(user.getPassword());
+        user.setPassword(password);
+        user.setRole("ROLE_USER");
+        User newuser = userRepo.save(user);
 
-        return user1;
+        return newuser;
     }
 
     @Override
